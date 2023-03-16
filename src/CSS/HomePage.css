@@ -1,0 +1,48 @@
+@charset "utf-8";
+ @import url('https://fonts.googleapis.com/css2?family=Yanone+Kaffeesatz:wght@700&display=swap');
+ @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@800&display=swap');
+ 
+
+  section.background {
+    display: table;
+    width: 100%;
+    height: 100%;
+    padding: 200px 0;
+    text-align: center;
+    background: url(../Img/homepage.jpg) no-repeat bottom center scroll;
+    background-position: 30% 25%;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    -o-background-size: cover;
+  }
+
+  .background p{
+    color: rgb(0, 0, 0); text-shadow: 0 0 0.2em rgb(255, 255, 255);
+    font-family: 'Yanone Kaffeesatz', sans-serif;
+    font-size: 20pt;
+    }
+
+  .background h2{
+    color: white; text-shadow: black 0.1em 0.1em 0.2em;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 50pt;
+  }  
+  
+  .background input{
+    margin-top: 69px;
+    width: 30%!important;
+    cursor: pointer;  
+    background: #1ebb26;
+    padding: 8px 5px;
+    color: #fff;
+    font-size: 20pt;  
+    border: 1px solid #fff;   
+    margin-bottom: 10px;  
+    text-shadow: 0 2px 1px #333;
+   font-size: 20pt;
+    -webkit-border-radius: 5px;
+    border-radius: 20px;
+   
+    transition: all 0.2s linear;
+  }

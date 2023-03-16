@@ -1,0 +1,86 @@
+@charset "UTF-8";
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Gugi&display=swap');
+
+.formu{
+  width: 600px;
+  min-height: 560px;    
+  margin: auto;
+  position: relative;
+  border-radius: 30px;
+  margin-top: 35px;
+  background-color: #117c23ea;
+  padding-bottom: 20px;
+  padding: 10px;
+}
+div.formu h1{
+  font-family: 'Julius Sans One', sans-serif;
+    text-align: center;
+    font-size: 35pt;
+    padding: 20px;
+}
+.formu label{
+  font-family: 'Oswald', sans-serif;
+	font-size: 18pt;
+}
+.formu p{
+    padding: 15px;
+}
+.formu input:not([type="radio"]){
+    border: 1px solid #b2b2b2;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    -webkit-box-shadow: 0px 1px 4px 0px rgba(168, 168, 168, 0.6) inset;
+    box-shadow: 0px 1px 4px 0px rgba(168, 168, 168, 0.6) inset;
+  }
+
+
+.formu input:not([type="radio"]){
+    width: 95%;
+    margin-top: 4px;
+    padding: 10px;    
+    border: 1px solid #b2b2b2;
+  }
+.fundo_gasto{
+    width: 100%;
+    height: 100%;
+    padding: 10px 0;
+    background: url(../Img/imagem-banco2.jpg) no-repeat bottom center scroll;
+    background-position: 100% 100%;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    -o-background-size: cover;
+  }
+
+.formu fieldset{
+  font-family: 'Oswald', sans-serif;
+	font-size: 18pt;
+	border-color: #3344362c;
+  margin: 30px;
+  padding: 30px;
+  padding-top: 10px;
+}
+.formu fieldset .gVari{
+  margin-left: 40%;
+}
+
+.formu input[type="submit"]{
+  width: 40%!important;
+  cursor: pointer;  
+  background: #1ebb26;
+  padding: 8px 5px;
+  color: #fff;
+  font-size: 15pt;  
+  border: 1px solid #fff;   
+  margin:  0px 0px 0px 170px;  
+  text-shadow: 0 1px 1px #333;
+ 
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+ 
+  transition: all 0.2s linear;
+}
+.formu input[type="submit"]:hover{
+  background: #2ae904;
+}
