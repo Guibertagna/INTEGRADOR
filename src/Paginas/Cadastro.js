@@ -4,6 +4,9 @@ import { app } from "../Services/FirebaseConfig";
 import { auth } from "../Services/FirebaseAuth";
 import { collection, getFirestore, getDocs, addDoc, query, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
+import { Redirect } from 'react-router-dom';
+
+
 
 // importar o módulo firebase/auth
 import { createUserWithEmailAndPassword } from "firebase/auth";
@@ -15,7 +18,8 @@ export const Cadastro = () => {
   const [telefone, setTelefone] = useState("");
   const [senha, setSenha] = useState("");
   const [users, setUsers] = useState([]);
-  const [erro, setErro] = useState("");
+  const [cadastradoComSucesso, setCadastradoComSucesso] = useState(false);
+
 
   const db = getFirestore(app);
   const userCollectionRef = collection(db, "users");
@@ -45,6 +49,8 @@ export const Cadastro = () => {
           telefone,
           senha,
         });
+      
+        setCadastradoComSucesso(true);
 
         alert('Dados gravados com sucesso!');
       }
@@ -65,6 +71,8 @@ export const Cadastro = () => {
         <div className="contente_cadastro">      
           <div className="cadastro">
             <form onSubmit={(e) => CriarSexo(e)}> 
+            {cadastradoComSucesso && <Redirect to="/home" />}
+
               <h2>C A D A S T R O</h2> 
                
               <p> 

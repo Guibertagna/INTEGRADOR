@@ -1,11 +1,14 @@
 import '../CSS/Gasto.css'
 import { app } from "../Services/FirebaseConfig";
 import { auth } from "../Services/FirebaseAuth";
-import { collection, getFirestore, addDoc, setDoc, doc, getDoc } from "firebase/firestore";
+import { collection, getFirestore, addDoc, setDoc, doc, getDoc , where, getDocs, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useForm } from 'react-hook-form';
+import { useHistory } from 'react-router-dom';
+
 
 function Gasto() {
+  const history = useHistory();
   const [submitting, setSubmitting] = useState(false);
   const {
     register,
@@ -37,11 +40,30 @@ function Gasto() {
   }, []);
 
   const [user, setUser] = useState(null);
-
   async function GravarGastos(data) {
     setSubmitting(true);
     try {
       if (user) {
+        // Verifica se já existe um gasto com o mesmo título
+        const titulo = data.titulo;
+        const querySnapshot = await getDocs(
+          query(gastosCollectionRef, where("titulo", "==", titulo))
+        );
+        
+        if (!querySnapshot.empty) {
+          alert("Já existe um gasto com esse título. Por favor, escolha outro título.");
+          return;
+        }
+        
+  
+        // Verifica se o valor máximo é menor que o valor mínimo
+        const valorMax = parseFloat(data.valor_max);
+        const valorMin = parseFloat(data.valor_min);
+        if (valorMax < valorMin) {
+          alert("O valor máximo não pode ser menor que o valor mínimo.");
+          return;
+        }
+  
         // Adiciona o ID e o email do usuário nos dados dos gastos
         data.userId = user.id;
         data.email = user.email;
@@ -51,9 +73,7 @@ function Gasto() {
         data.tipoGasto = tipoGasto;
   
         // Calcula o valor da variável gasto_medio com base no tipo de gasto
-        const valorMax = parseFloat(data.valor_max);
-        const valorMin = parseFloat(data.valor_min);
-        const gastoMedio = tipoGasto === "fixo" ? valorMax : (valorMax + valorMin)/2;
+        const gastoMedio = tipoGasto === "fixo" ? valorMax : (valorMax + valorMin) / 2;
         data.gasto_medio = gastoMedio;
   
         // Adiciona os dados dos gastos à coleção
@@ -74,6 +94,7 @@ function Gasto() {
             await setDoc(userRef, userData);
           }
           alert("Dados gravados com sucesso!");
+          history.push("/home");
         } else {
           alert("Erro ao gravar os dados: documento não encontrado");
         }
@@ -85,6 +106,7 @@ function Gasto() {
     }
     setSubmitting(false);
   }
+  
   
   function handleTipoDeGastoChange(event) {
     setTipoDeGasto(event.target.value);
@@ -113,10 +135,17 @@ function Gasto() {
     className="VMaximo"
     id="valor_max"
     placeholder="Insira o Valor Maximo"
-    {...register("valor_max", { required: true })}
+    {...register("valor_max", {
+      required: true,
+    })}
+    type="number"
+    step="0.01"
+    inputMode="numeric" // adicionado para aceitar somente números
   />
   {errors.valor_max && (
-    <span className="error">Este campo é obrigatório</span>
+    <span className="error">
+      Este campo é obrigatório e deve ser um número positivo
+    </span>
   )}
 </p>
 <p>
@@ -125,12 +154,20 @@ function Gasto() {
     className="VMinimo"
     id="valor_min"
     placeholder="Insira o Valor Minimo"
-    {...register("valor_min", { required: true })}
+    {...register("valor_min", {
+      required: true,
+    })}
+    type="number"
+    step="0.01"
+    inputMode="numeric" // adicionado para aceitar somente números
   />
   {errors.valor_min && (
-    <span className="error">Este campo é obrigatório</span>
+    <span className="error">
+      Este campo é obrigatório e deve ser um número positivo
+    </span>
   )}
 </p>
+
 <p>
   <label htmlFor="data_deb">Data a ser debitado</label>
   <input

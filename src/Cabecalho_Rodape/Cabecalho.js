@@ -8,10 +8,7 @@ function Cabecalho(){
       <nav className="menu">
           <ul>
           <li><Link to="/Perfil"><span>Perfil</span></Link></li>  
-          <li><Link to="/ContaCorrente"><span>Relatórios</span></Link></li>
-          <li><Link to="/Cofrinho"><span>Cofrinho</span></Link></li> 
-          <li><Link to="/Gastos"><span>Gastos</span></Link></li>
-          <li><Link to="/"><span>Home</span></Link></li>
+          <li><Link to="/Home"><span>Home</span></Link></li>
          </ul>
       </nav>
     </div>

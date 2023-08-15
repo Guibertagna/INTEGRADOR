@@ -1,21 +1,21 @@
-import { Link, Redirect } from "react-router-dom";
-import "../CSS/Cadastro.css";
-import { useState, useEffect } from "react";
-import {
-  useSignInWithEmailAndPassword,
-  useAuthState,
-} from "react-firebase-hooks/auth";
 import { auth } from "../Services/FirebaseAuth";
 import { useHistory } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useSignInWithEmailAndPassword, useAuthState } from "react-firebase-hooks/auth";
+import { sendPasswordResetEmail } from "firebase/auth";
 
 function Login() {
-  const [email, setEmail] = useState("");
+
   const [senha, setSenha] = useState("");
   const [mensagem, setMensagem] = useState("");
+  const [forgotPassword, setForgotPassword] = useState(false);
   const history = useHistory();
-
+  const [loggedIn, setLoggedIn] = useState(false);
   const [signInWithEmailAndPassword, user, loading, error] =
     useSignInWithEmailAndPassword(auth);
+    const [email, setEmail] = useState("");
+
 
   // Usamos o hook useAuthState para monitorar o estado de autenticação do usuário
   const [userAuth] = useAuthState(auth);
@@ -23,6 +23,42 @@ function Login() {
   useEffect(() => {
     startSessionTimer();
   }, []);
+
+  const handleForgotPassword = (e) => {
+    e.preventDefault();
+    if (typeof email === "string" && email.trim() !== "") {
+      sendPasswordResetEmail(email)
+        .then(() => {
+          setMensagem(
+            "Um e-mail com as instruções para redefinir sua senha foi enviado para " +
+              email
+          );
+        })
+        .catch((error) => {
+          setMensagem(
+            "Ocorreu um erro ao tentar enviar o e-mail de redefinição de senha: " +
+              error.message
+          );
+        });
+    } else {
+      setMensagem("Por favor, informe um endereço de e-mail válido.");
+    }
+    
+    sendPasswordResetEmail(auth, email)
+      
+    .then(() => {
+        setMensagem(
+          "Um e-mail com as instruções para redefinir sua senha foi enviado para " +
+            email
+        );
+      })
+      .catch((error) => {
+        setMensagem(
+          "Ocorreu um erro ao tentar enviar o e-mail de redefinição de senha: " +
+            error.message
+        );
+      });
+  };
 
   function startSessionTimer() {
     // Verifica se já existe um temporizador na sessão
@@ -46,38 +82,67 @@ function Login() {
     e.preventDefault();
     signInWithEmailAndPassword(email, senha)
       .then((userCredential) => {
-        setMensagem("Usuário autenticado com sucesso!");
         const user = userCredential.user;
-        localStorage.setItem("user", JSON.stringify(user));
-        history.push("/Gastos");
+        if (user.email === "emailcorreto@example.com" && user.senha === "senhacorreta") {
+          localStorage.setItem("user", JSON.stringify(user));
+          history.push("/Home");
+          setLoggedIn(true);
+        } else {
+          window.alert("Logado com sucesso!");
+        }
       })
       .catch((error) => {
-        setMensagem("Erro ao autenticar usuário: " + error.message);
+        window.alert("Erro ao autenticar usuário: ");
       });
   }
+  
 
   // Se o usuário já estiver autenticado, redireciona para a página de gastos
   if (userAuth) {
-    return <Redirect to="/Gastos" />;
+    return <Redirect to="/Home" />;
   }
 
   if (loading) {
-    return <p>carregando...</p>;
+    return alert("Inicializando sessão!")
   }
 
   if (user) {
     console.log(user);
   }
 
-    return (
-      <div className="containerr">
-        <div className="contente_login">
-          <div className="login">
+  return (
+    <div className="containerr">
+      <div className="contente_login">
+        <div className="login">
+          {forgotPassword ? (
+            <form onSubmit={handleForgotPassword}>
+              <h2>Esqueceu sua senha?</h2>
+              <p>
+                <label htmlFor="email">E-mail:</label>
+                <input
+                  id="email"
+                  name="email"
+                  required
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </p>
+              <p>
+                <input type="submit" value="Enviar link para redefinição de senha" />
+              </p>
+              <p className="link_l">
+                Lembrou da senha?{" "}
+                <a href="#" onClick={() => setForgotPassword(false)}>
+                  Faça login
+                </a>
+              </p>
+            </form>
+          ) : (
             <form onSubmit={(e) => handleSingIn(e)}>
               <h2>L O G I N</h2>
-              {mensagem && <p>{mensagem}</p>}
               <p>
-                <label htmlFor="email_login"> E-mail: </label>
+                <label htmlFor="email_login">E-mail:</label>
                 <input
                   id="email"
                   name="email"
@@ -88,7 +153,7 @@ function Login() {
                 />
               </p>
               <p>
-                <label htmlFor="senha_login">Senha: </label>
+                <label htmlFor="senha_login">Senha:</label>
                 <input
                   id="senha"
                   name="senha"
@@ -104,16 +169,24 @@ function Login() {
                 <label htmlFor="manterlogado">Manter-me logado</label>
               </p>
               <p>
-                <input type="submit" value="Logar"/>
+                <input type="submit" value="Logar" />
               </p>
               <p className="link_l">
-                Ainda não tem conta?  <Link to="/Cadastro"><span>Cadastre-se</span></Link>
+                Ainda não tem conta?{" "}
+                <Link to="/Cadastro">
+                  <span>Cadastre-se</span>
+                </Link>
+              </p>
+              <p className="link_r">
+                <a href="#" onClick={handleForgotPassword}>
+                  Esqueceu sua senha?
+                </a>
               </p>
             </form>
-          </div>
+          )}
         </div>
       </div>
-    );
+    </div>
+  );
   }
-
   export default Login;

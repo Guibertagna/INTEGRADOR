@@ -1,41 +1,44 @@
-
-import { Route, BrowserRouter, Switch} from "react-router-dom";
+import { Route, BrowserRouter, Switch } from "react-router-dom";
 import Gasto from "./Paginas/Gasto";
 import ContaCorrente from "./Paginas/ContaCorrente";
-import {Cadastro} from "./Paginas/Cadastro";
+import { Cadastro } from "./Paginas/Cadastro";
 import Login from "./Paginas/Login";
 import Cofrinho from "./Paginas/Cofrinho";
 import Cabecalho from "./Cabecalho_Rodape/Cabecalho";
 import Rodape from "./Cabecalho_Rodape/Rodape";
-import { getAuth } from "firebase/auth";
 import { Redirect } from "react-router-dom";
 import HomePage from "./Paginas/HomePage";
+import Home from "./Paginas/Home";
 import { useState, useEffect } from "react";
+import Perfil from "./Paginas/Perfil";
+import { auth } from "./Services/FirebaseAuth";
+import Relatorios from "./Paginas/Relatorios";
+import EditarContaCorrente from "./Paginas/EditarContaCorrente"
 
-const PrivateRoute = ({ component: Component, isLogin, ...rest }) => {
-  const [authenticated, setAuthenticated] = useState("");
+const PrivateRoute = ({ component: Component, ...rest }) => {
+  const [authenticated, setAuthenticated] = useState(null);
   
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const user =  getAuth().currentUser;
+        const user = auth.currentUser;
         setAuthenticated(!!user);
       } catch (error) {
         console.log(error);
       }
     };
     checkAuth();
-  }, []);
+  }, [authenticated]);
   
-  if (authenticated === "") {
-    return <div>Loading...</div>;
+  if (authenticated === null) {
+    return authenticated;
   }
   
   return (
     <Route
       {...rest}
       render={(props) =>
-        isLogin || authenticated ? (
+        authenticated ? (
           <Component {...props} />
         ) : (
           <Redirect to="/Login" />
@@ -44,20 +47,24 @@ const PrivateRoute = ({ component: Component, isLogin, ...rest }) => {
     />
   );
 };
-  
 const Rotas = () => {
   return (
-      <BrowserRouter>
-       <div>
-          <Cabecalho/>
-        </div>
-        <Switch>
-          <Route path="/login" component={Login} />
+    <BrowserRouter>
+      <div>
+        <Cabecalho />
+      </div>
+      <Switch>
+        <Route path="/login" component={Login}/>
           <Route exact path="/" component={HomePage}/>
-          <Route path="/Cadastro" component={Cadastro}/>
-          <PrivateRoute  path="/ContaCorrente" component={ContaCorrente} isLogin={false} />
-          <PrivateRoute path="/Gastos" component={Gasto} isLogin={false} />
-          <PrivateRoute path="/Cofrinho" component={Cofrinho} isLogin={false} />
+          <Route exact path="/Cadastro" component={Cadastro}/>
+
+          <PrivateRoute exact path="/home" component={Home}/>
+          <PrivateRoute exact path="/contaCorrente" component={ContaCorrente} />
+          <PrivateRoute exact path="/gastos" component={Gasto}/>
+          <PrivateRoute exact path="/cofrinho" component={Cofrinho} />
+          <PrivateRoute exact path="/perfil" component={Perfil}/>
+          <PrivateRoute exact path="/relatorios" component={Relatorios}/>
+          <PrivateRoute exact path="/EditarContaCorrente" component={EditarContaCorrente}/>
         </Switch>
         <div>
           <Rodape/>
